@@ -6,7 +6,7 @@
 /*   By: eebert <eebert@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 16:48:05 by eebert            #+#    #+#             */
-/*   Updated: 2024/10/30 16:49:33 by eebert           ###   ########.fr       */
+/*   Updated: 2024/10/30 18:02:38 by eebert           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,12 +60,13 @@ bool	read_n_bytes(const void *nb, const size_t bytes, const int bit,
 void	send_n_bytes_to_pid(const pid_t pid, const unsigned long data,
 		const int n, const bool print_progress)
 {
-	int			i;
-	const int	bit = (data >> i) & 1;
+	int	i;
+	int	bit;
 
 	i = 0;
 	while (i < n * 8)
 	{
+		bit = (data >> i) & 1;
 		kill(pid, 30 + bit);
 		usleep(SEND_DELAY);
 		i++;

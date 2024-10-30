@@ -6,7 +6,7 @@
 /*   By: eebert <eebert@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 16:57:47 by eebert            #+#    #+#             */
-/*   Updated: 2024/10/30 16:58:02 by eebert           ###   ########.fr       */
+/*   Updated: 2024/10/30 18:24:31 by eebert           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ void	reset_client_info(t_client_info *client_info)
 	}
 }
 
-t_receive_step_mapper	*get_receive_step_mapper(t_receive_step_mapper *list,
+const t_receive_step_mapper	*get_receive_step_mapper(
+		const t_receive_step_mapper *list,
 		size_t size, t_receive_step step)
 {
 	size_t	i;

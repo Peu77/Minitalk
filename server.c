@@ -6,7 +6,7 @@
 /*   By: eebert <eebert@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 16:51:46 by eebert            #+#    #+#             */
-/*   Updated: 2024/10/30 17:03:51 by eebert           ###   ########.fr       */
+/*   Updated: 2024/10/30 18:08:27 by eebert           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,26 +65,27 @@ void	signal_handler(int signal)
 {
 	static t_client_info				client_info;
 	const int							bit = signal - 30;
-	const static t_receive_step_mapper	receive_step_mapper[] = {{RECEIVE_PID,
-		handle_receive_pid, sizeof(pid_t), &client_info.pid}, {RECEIVE_SIZE,
-		handle_receive_size, sizeof(size_t), &client_info.size},
+	const static t_receive_step_mapper	receive_step_mapper_list[] = {{
+		RECEIVE_PID, handle_receive_pid, sizeof(pid_t), &client_info.pid},
+	{RECEIVE_SIZE, handle_receive_size, sizeof(size_t), &client_info.size},
 	{RECEIVE_DATA, handle_receive_data, sizeof(char),
 		&client_info.current_char}};
-
-	const receive_step_mapper = get_receive_step_mapper(receive_step_mapper,
-			sizeof(receive_step_mapper)
+	const t_receive_step_mapper			*receive_step_mapper
+		= get_receive_step_mapper(receive_step_mapper_list,
+			sizeof(receive_step_mapper_list)
 			/ sizeof(t_receive_step_mapper),
 			client_info.step);
+
 	if (signal == SIGINT)
 	{
 		if (client_info.str)
 			free(client_info.str);
 		exit(0);
 	}
-	if (read_n_bytes(receive_step_mapper[i].data,
-			receive_step_mapper[i].data_size, bit,
+	if (read_n_bytes(receive_step_mapper->data,
+			receive_step_mapper->data_size, bit,
 			client_info.step != RECEIVE_DATA)
-		&& receive_step_mapper[i].fun(&client_info))
+		&& receive_step_mapper->fun(&client_info))
 		client_info.step = (client_info.step + 1) % 3;
 }
 
