@@ -6,71 +6,86 @@
 #include "ft_printf.h"
 #include <stdio.h>
 #include <stdbool.h>
+#include "server.h"
 
-bool read_n_bytes(void* nb, size_t bytes, int bit)
+static bool handle_receive_pid(t_client_info* client_info)
 {
-	static size_t bit_i = 0;
-	uint8_t *byte_ptr = (uint8_t *)nb;
-
-	byte_ptr[bit_i / 8] |= (bit << (bit_i % 8));
-	bit_i++;
-	if (bit_i == bytes * 8)
-	{
-		bit_i = 0;
-		return true;
-	}
-	return false;
+    printf("\nreceived pid: %d\n", client_info->pid);
+    return true;
 }
 
-void	signal_handler(pid_t pid)
+static bool handle_receive_size(t_client_info* client_info)
 {
-	static char		c;
-	static pid_t	client_pid;
-	static size_t	char_i = 0;
-	static size_t	size = 0;
-	static t_receive_step step = RECEIVE_PID;
-	const int		bit = pid - 30;
-
-	if (step == RECEIVE_PID)
-	{
-		if(read_n_bytes(&client_pid, sizeof(pid_t), bit))
-		{
-			step = RECEIVE_SIZE;
-			ft_printf("client_id: %d\n", client_pid);
-		}
-		return;
-	}
-
-	if(step == RECEIVE_SIZE)
-	{
-		if(read_n_bytes(&size, sizeof(size_t), bit))
-		{
-			step = RECEIVE_DATA;
-			printf("size: %zu\n", size);
-		}
-		return;
-	}
-
-	if(read_n_bytes(&c, sizeof(char), bit))
-	{
-		write(1, &c, 1);
-		if (c == 0)
-		{
-			send_n_bytes_to_pid(client_pid, char_i, sizeof(size_t));
-			write(1, "\n", 1);
-			client_pid = 0;
-		}
-		char_i++;
-		c = 0;
-	}
+    printf("\nreceived size: %zu\n", client_info->size);
+    client_info->str = malloc(client_info->size + 1);
+    client_info->char_i = 0;
+    if (!client_info->str)
+    {
+        ft_printf("failed to allocate memory\n");
+        exit(1);
+    }
+    return true;
 }
 
-int	main(void)
+static bool handle_receive_data(t_client_info* client_info)
 {
-	signal(SIGUSR1, signal_handler);
-	signal(SIGUSR2, signal_handler);
-	printf("pid: %d\n", getpid());
-	while (pause())
-		;
-	return (0);
+    if (client_info->char_i++ < client_info->size)
+    {
+        print_ascii_loading_animation(client_info->char_i, client_info->size);
+        client_info->str[client_info->char_i] = client_info->current_char;
+    }
+    else
+    {
+        write(1, "\n", 1);
+        write(1, client_info->str, client_info->char_i);
+        write(1, "\n", 1);
+        printf("sending response\n");
+        send_n_bytes_to_pid(client_info->pid, client_info->char_i, sizeof(size_t), true);
+        reset_client_info(client_info);
+        return true;
+    }
+    client_info->current_char = 0;
+    return false;
+}
+
+void signal_handler(int signal)
+{
+    static t_client_info client_info;
+    const int bit = signal - 30;
+    int i;
+    const static t_receive_step_mapper receive_step_mapper[] = {
+        {RECEIVE_PID, handle_receive_pid, sizeof(pid_t), &client_info.pid},
+        {RECEIVE_SIZE, handle_receive_size, sizeof(size_t), &client_info.size},
+        {RECEIVE_DATA, handle_receive_data, sizeof(char), &client_info.current_char}
+    };
+
+    i = 0;
+    if(signal == SIGINT)
+    {
+        if (client_info.str)
+            free(client_info.str);
+        exit(0);
+    }
+
+    while (i != sizeof(receive_step_mapper) / sizeof(t_receive_step_mapper))
+    {
+        if (receive_step_mapper[i].step == client_info.step && read_n_bytes(
+            receive_step_mapper[i].data, receive_step_mapper[i].data_size, bit, client_info.step != RECEIVE_DATA))
+        {
+            if (receive_step_mapper[i].fun(&client_info))
+                client_info.step = (client_info.step + 1) % 3;
+            break;
+        }
+        i++;
+    }
+}
+
+int main(void)
+{
+    signal(SIGUSR1, signal_handler);
+    signal(SIGUSR2, signal_handler);
+    signal(SIGINT, signal_handler);
+    printf("pid: %d\n", getpid());
+    while (pause());
+    return (0);
 }

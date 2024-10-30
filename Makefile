@@ -1,7 +1,7 @@
 SERVER_NAME = server
 CLIENT_NAME = client
 
-SERVER_SRCS = server.c utils.c
+SERVER_SRCS = server.c utils.c server_utils.c
 CLIENT_SRCS = client.c utils.c
 
 SERVER_OBJS = $(SERVER_SRCS:.c=.o)
@@ -11,6 +11,8 @@ LIB_PRINTF = ft_printf/libftprintf.a
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -I ft_printf/libft -I ft_printf/src -fsanitize=address -g
+
+bonus: all
 
 all: $(LIB_PRINTF) $(SERVER_NAME) $(CLIENT_NAME)
 
