@@ -6,7 +6,7 @@
 /*   By: eebert <eebert@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 17:06:11 by eebert            #+#    #+#             */
-/*   Updated: 2024/11/01 12:54:08 by eebert           ###   ########.fr       */
+/*   Updated: 2024/11/01 14:41:31 by eebert           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,25 @@ static void	pause_n_times(size_t n)
 		pause();
 }
 
+static void	parse_args(const int argc, char **argv, int *pid, char **str)
+{
+	if (argc != 3)
+	{
+		ft_printf("usage: %s <pid> <string>\n", argv[0]);
+		exit(1);
+	}
+	*pid = ft_atoi(argv[1]);
+	*str = argv[2];
+}
+
 int	main(const int argc, char **argv)
 {
-	const int	pid = ft_atoi(argv[1]);
 	const pid_t	my_pid = getpid();
-	const char	*str = argv[2];
+	int			pid;
+	char		*str;
 	size_t		i;
 
-	(void)argc;
+	parse_args(argc, argv, &pid, &str);
 	signal(SIGUSR1, signal_handler);
 	signal(SIGUSR2, signal_handler);
 	ft_printf("pid sending to %d my_pid: %ul size_t \n", pid, my_pid);
@@ -62,6 +73,5 @@ int	main(const int argc, char **argv)
 	}
 	send_n_bytes_to_pid(pid, 0, sizeof(char), false);
 	ft_printf("\nreceiving response\n");
-	pause_n_times(sizeof(size_t) * 8 - 1);
-	return (0);
+	return (pause_n_times(sizeof(size_t) * 8 - 1), 0);
 }
