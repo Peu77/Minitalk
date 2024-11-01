@@ -6,7 +6,7 @@
 /*   By: eebert <eebert@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 17:06:11 by eebert            #+#    #+#             */
-/*   Updated: 2024/11/01 14:41:31 by eebert           ###   ########.fr       */
+/*   Updated: 2024/11/01 15:42:44 by eebert           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 static void	signal_handler(int signal)
 {
 	static size_t	bytes_send = 0;
-	const int		bit = signal - 30;
+	const int		bit = signal_to_bit(signal);
 
 	if (read_n_bytes(&bytes_send, sizeof(size_t), bit, true))
 	{
@@ -46,6 +46,11 @@ static void	parse_args(const int argc, char **argv, int *pid, char **str)
 	}
 	*pid = ft_atoi(argv[1]);
 	*str = argv[2];
+	if (*pid <= 0)
+	{
+		ft_printf("Invalid pid\n");
+		exit(1);
+	}
 }
 
 int	main(const int argc, char **argv)
@@ -71,7 +76,6 @@ int	main(const int argc, char **argv)
 		i++;
 		print_ascii_loading_animation(i, ft_strlen(str));
 	}
-	send_n_bytes_to_pid(pid, 0, sizeof(char), false);
 	ft_printf("\nreceiving response\n");
 	return (pause_n_times(sizeof(size_t) * 8 - 1), 0);
 }

@@ -6,7 +6,7 @@
 /*   By: eebert <eebert@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 16:48:05 by eebert            #+#    #+#             */
-/*   Updated: 2024/10/30 18:02:38 by eebert           ###   ########.fr       */
+/*   Updated: 2024/11/01 15:13:48 by eebert           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,10 +67,20 @@ void	send_n_bytes_to_pid(const pid_t pid, const unsigned long data,
 	while (i < n * 8)
 	{
 		bit = (data >> i) & 1;
-		kill(pid, 30 + bit);
+		if (bit)
+			kill(pid, SIGUSR1);
+		else
+			kill(pid, SIGUSR2);
 		usleep(SEND_DELAY);
 		i++;
 		if (print_progress)
 			print_ascii_loading_animation(i, n * 8);
 	}
+}
+
+int	signal_to_bit(int signal)
+{
+	if (signal == SIGUSR1)
+		return (1);
+	return (0);
 }

@@ -26,4 +26,6 @@ void	send_n_bytes_to_pid(pid_t pid, unsigned long data, int n,
 
 void	print_ascii_loading_animation(const size_t current, const size_t total);
 
+int		signal_to_bit(int signal);
+
 #endif

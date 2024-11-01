@@ -6,7 +6,7 @@
 /*   By: eebert <eebert@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 16:51:46 by eebert            #+#    #+#             */
-/*   Updated: 2024/11/01 14:21:51 by eebert           ###   ########.fr       */
+/*   Updated: 2024/11/01 15:47:04 by eebert           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,13 +40,15 @@ static bool	handle_receive_size(t_client_info *client_info)
 
 static bool	handle_receive_data(t_client_info *client_info)
 {
-	if (client_info->char_i++ < client_info->size)
+	if (client_info->char_i < client_info->size)
 	{
 		print_ascii_loading_animation(client_info->char_i, client_info->size);
 		client_info->str[client_info->char_i] = client_info->current_char;
+		client_info->char_i++;
 	}
-	else
+	if (client_info->char_i == client_info->size)
 	{
+		print_ascii_loading_animation(client_info->char_i, client_info->size);
 		write(1, "\n", 1);
 		write(1, client_info->str, client_info->char_i);
 		write(1, "\n", 1);
@@ -63,7 +65,7 @@ static bool	handle_receive_data(t_client_info *client_info)
 void	signal_handler(int signal)
 {
 	static t_client_info				client_info;
-	const int							bit = signal - 30;
+	const int							bit = signal_to_bit(signal);
 	static const t_receive_step_mapper	receive_step_mapper_list[] = {{
 		RECEIVE_PID, handle_receive_pid, sizeof(pid_t), &client_info.pid},
 	{RECEIVE_SIZE, handle_receive_size, sizeof(size_t), &client_info.size},
