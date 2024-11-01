@@ -10,7 +10,7 @@ CLIENT_OBJS = $(CLIENT_SRCS:.c=.o)
 LIB_PRINTF = ft_printf/libftprintf.a
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -I ft_printf/libft -I ft_printf/src -fsanitize=address -g
+CFLAGS = -Wall -Wextra -Werror -I ft_printf/libft -I ft_printf/src
 
 
 
