@@ -6,7 +6,7 @@
 /*   By: eebert <eebert@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 16:51:46 by eebert            #+#    #+#             */
-/*   Updated: 2024/10/30 18:08:27 by eebert           ###   ########.fr       */
+/*   Updated: 2024/11/01 14:21:51 by eebert           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 #include <signal.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <sys/_types/_pid_t.h>
 #include <sys/signal.h>
 #include <unistd.h>
 
@@ -65,7 +64,7 @@ void	signal_handler(int signal)
 {
 	static t_client_info				client_info;
 	const int							bit = signal - 30;
-	const static t_receive_step_mapper	receive_step_mapper_list[] = {{
+	static const t_receive_step_mapper	receive_step_mapper_list[] = {{
 		RECEIVE_PID, handle_receive_pid, sizeof(pid_t), &client_info.pid},
 	{RECEIVE_SIZE, handle_receive_size, sizeof(size_t), &client_info.size},
 	{RECEIVE_DATA, handle_receive_data, sizeof(char),
