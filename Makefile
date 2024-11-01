@@ -12,9 +12,11 @@ LIB_PRINTF = ft_printf/libftprintf.a
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -I ft_printf/libft -I ft_printf/src -fsanitize=address -g
 
-bonus: all
+
 
 all: $(LIB_PRINTF) $(SERVER_NAME) $(CLIENT_NAME)
+
+bonus: all
 
 $(LIB_PRINTF):
 	@make -C ft_printf
