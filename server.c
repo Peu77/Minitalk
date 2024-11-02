@@ -45,6 +45,7 @@ static bool	handle_receive_data(t_client_info *client_info)
 		client_info->str[client_info->char_i] = client_info->current_char;
 		client_info->char_i++;
 	}
+	client_info->current_char = 0;
 	if (client_info->char_i == client_info->size)
 	{
 		print_ascii_loading_animation(client_info->char_i, client_info->size);
@@ -57,7 +58,6 @@ static bool	handle_receive_data(t_client_info *client_info)
 		reset_client_info(client_info);
 		return (true);
 	}
-	client_info->current_char = 0;
 	return (false);
 }
 
