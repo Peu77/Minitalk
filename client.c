@@ -51,6 +51,11 @@ static void	parse_args(const int argc, char **argv, int *pid, char **str)
 		ft_printf("Invalid pid\n");
 		exit(1);
 	}
+	if (**str == '\0')
+	{
+		ft_printf("Invalid string\n");
+		exit(1);
+	}
 }
 
 int	main(const int argc, char **argv)
@@ -63,7 +68,6 @@ int	main(const int argc, char **argv)
 	parse_args(argc, argv, &pid, &str);
 	signal(SIGUSR1, signal_handler);
 	signal(SIGUSR2, signal_handler);
-	ft_printf("pid sending to %d my_pid: %ul size_t \n", pid, my_pid);
 	ft_printf("sending my_pid\n");
 	send_n_bytes_to_pid(pid, my_pid, sizeof(pid_t), true);
 	ft_printf("\nsending size\n");
