@@ -14,7 +14,6 @@
 #include "libft.h"
 #include "utils.h"
 #include <signal.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <sys/signal.h>
 #include <wchar.h>
@@ -26,7 +25,7 @@ static void	signal_handler(int signal)
 
 	if (read_n_bytes(&bytes_send, sizeof(size_t), bit, true))
 	{
-		printf("\nsend bytes: %zu\n", bytes_send);
+		ft_printf("\nsend bytes: %d\n", bytes_send);
 		bytes_send = 0;
 	}
 }
@@ -72,7 +71,7 @@ int	main(const int argc, char **argv)
 	send_n_bytes_to_pid(pid, my_pid, sizeof(pid_t), true);
 	ft_printf("\nsending size\n");
 	send_n_bytes_to_pid(pid, ft_strlen(str), sizeof(size_t), true);
-	printf("\nsending data\n");
+	ft_printf("\nsending data\n");
 	i = 0;
 	while (str[i])
 	{
