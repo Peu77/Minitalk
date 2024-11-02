@@ -1,0 +1,3 @@
+/Users/eebert/Documents/projects/Minitalk/build/CMakeFiles/Minitalk.dir
+/Users/eebert/Documents/projects/Minitalk/build/CMakeFiles/edit_cache.dir
+/Users/eebert/Documents/projects/Minitalk/build/CMakeFiles/rebuild_cache.dir
